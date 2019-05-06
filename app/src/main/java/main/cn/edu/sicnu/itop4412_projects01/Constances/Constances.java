@@ -9,7 +9,11 @@ package main.cn.edu.sicnu.itop4412_projects01.Constances;
  */
 public class Constances {
 
-    private static final String LOGIN_SERVER_URL="http://192.168.8.124:8080/final_project/company/check_login";
+    private static String IP = "192.168.8.124";
+
+    private static String port = "8080";
+
+    private static final String LOGIN_SERVER_URL="http://"+IP+":"+port+"/final_project/company/check_login";
 
     public static final int SUCCESS = 1;
 
@@ -30,4 +34,6 @@ public class Constances {
     public static final int getFail(){
         return FAIL;
     }
+
+
 }

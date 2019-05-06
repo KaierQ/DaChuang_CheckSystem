@@ -2,6 +2,7 @@ package main.cn.edu.sicnu.itop4412_projects01;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Handler;
@@ -40,10 +41,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //选择框
     private CheckBox rememberAccountPwd;
 
+    //当前活动
+    private AppCompatActivity activity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
+        activity = this;
         accountEdit = findViewById(R.id.account_edit);
         passwordEdit = findViewById(R.id.password_edit);
         login = findViewById(R.id.login_btn);
@@ -59,12 +64,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},0);
         }//if
+        //恢复
+        restore();
 
-        //如果记住密码已经被选择
-        if(rememberAccountPwd.isChecked()){
-            //恢复
-            restore();
-        }
     }
 
     /**
@@ -160,8 +162,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     accountEdit.setEnabled(true);
                     passwordEdit.setEnabled(true);
                     progressBar.setVisibility(View.GONE);
+                    Toast.makeText(activity, "登陆成功", Toast.LENGTH_SHORT).show();
                     //跳转活动
+                    Intent intent = new Intent(activity,HomePageActivity.class);
+                    startActivity(intent);
                     //销毁当前活动
+                    finish();
                     break;
                 case Constances.FAIL:
                     //重新恢复登录按钮和EditText
@@ -169,8 +175,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     accountEdit.setEnabled(true);
                     passwordEdit.setEnabled(true);
                     //显示进度
-                    progressBar.setVisibility(View.VISIBLE);
-
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(activity, "登陆失败", Toast.LENGTH_SHORT).show();
                     break;
                 default:break;
             }

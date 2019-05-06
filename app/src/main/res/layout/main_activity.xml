@@ -27,12 +27,11 @@
         android:id="@+id/password_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="15"
-        android:maxLines="1"
         android:layout_gravity="center_horizontal"
+        android:ems="15"
         android:hint="密码:"
         android:inputType="textPassword"
-        />
+        android:maxLines="1" />
 
     <LinearLayout
         android:orientation="horizontal"
