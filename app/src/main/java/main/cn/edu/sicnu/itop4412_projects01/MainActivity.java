@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText passwordEdit;
     //登陆
     private Button login;
+    //测试
+    private Button testButton;
     //进度提醒
     private ProgressBar progressBar;
     //选择框
@@ -54,8 +56,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         login = findViewById(R.id.login_btn);
         rememberAccountPwd = findViewById(R.id.remember_ap);
         progressBar = findViewById(R.id.progressbar);
+        testButton = findViewById(R.id.test);
         login.setOnClickListener(this);
-
+        testButton.setOnClickListener(this);
         //申请权限
         if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.INTERNET)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.INTERNET},0);
@@ -147,6 +150,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             break;
+            case R.id.test:
+                //跳转活动
+                Intent intent = new Intent(activity,HomePageActivity.class);
+                startActivity(intent);
+                //销毁当前活动
+                finish();
+                break;
             default:break;
         }//switch
     }

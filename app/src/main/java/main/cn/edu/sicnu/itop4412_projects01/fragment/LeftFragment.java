@@ -1,5 +1,6 @@
 package main.cn.edu.sicnu.itop4412_projects01.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,10 +25,21 @@ import main.cn.edu.sicnu.itop4412_projects01.R;
 
 public class LeftFragment extends Fragment {
 
+    private RightRegisterFragment rightRegisterFragment;
+    private RightCheckInFragment rightCheckInFragment;
+    private RightCheckOutFragment rightCheckOutFragment;
+    private RightNotifyFragment rightNotifyFragment;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.left_frag, container, false);
+        //预先准备好碎片对象
+        rightRegisterFragment = new RightRegisterFragment();
+        rightCheckInFragment = new RightCheckInFragment();
+        rightCheckOutFragment = new RightCheckOutFragment();
+        rightNotifyFragment = new RightNotifyFragment();
+
         RecyclerView recyclerView = view.findViewById(R.id.title_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
@@ -81,6 +93,7 @@ public class LeftFragment extends Fragment {
                     FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                     FragmentTransaction transaction = fragmentManager.beginTransaction();
                     transaction.replace(R.id.right_layout,getFragment(title));
+                    transaction.commit();
                 }
             });
             return holder;
@@ -104,14 +117,14 @@ public class LeftFragment extends Fragment {
          */
         private Fragment getFragment(String title){
             if("员工注册".equals(title)){
-                return new RightRegisterFragment();
+                return rightRegisterFragment;
             }else if("上班打卡".equals(title)){
-                return new RightCheckInFragment();
+                return rightCheckInFragment;
             }else if("下班打卡".equals(title)){
-                return new RightCheckOutFragment();
+                return rightCheckOutFragment;
             }else{
-                return new RightNotifyFragment();
-            }
+                return rightNotifyFragment;
+            }//else
         }
 
     }

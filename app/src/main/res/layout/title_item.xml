@@ -5,9 +5,10 @@
     android:layout_height="wrap_content"
     android:singleLine="true"
     android:ellipsize="end"
-    android:textSize="18sp"
-    android:paddingLeft="10dp"
+    android:textSize="30sp"
+    android:paddingLeft="30dp"
     android:paddingRight="10dp"
     android:paddingTop="15dp"
-    android:paddingBottom="15dp"
+    android:paddingBottom="40dp"
+    android:background="@android:color/holo_blue_bright"
     />
