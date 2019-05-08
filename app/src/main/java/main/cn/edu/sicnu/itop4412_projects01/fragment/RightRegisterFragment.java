@@ -1,7 +1,6 @@
 package main.cn.edu.sicnu.itop4412_projects01.fragment;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,12 +23,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import main.cn.edu.sicnu.itop4412_projects01.Constances.Constances;
 import main.cn.edu.sicnu.itop4412_projects01.R;
-import main.cn.edu.sicnu.itop4412_projects01.utils.BitmapUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -129,18 +129,22 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
         if(requestCode==1){
 //            Toast.makeText(getActivity(), "上传中,请稍后...", Toast.LENGTH_SHORT).show();
             //这种情况下data为null,因为自定义了路径,所以通过这个路径来获取
-            Bitmap bitmap = BitmapUtil.getSmallBitmap(photoPath);
+            //Bitmap bitmap = BitmapUtil.getSmallBitmap(photoPath);
             Log.d(TAG, "onActivityResult: "+PHOTO_URL);
             //将文件分割
             //Android版本不同所用到的MultipartBody  MultipartBuilder对象不同  我用的版本android 3.0以上 所以用的MultipartBuilder
             MultipartBody.Builder builder = new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)
-                    .addFormDataPart("cid",Constances.getCid()+"")
-                    .addFormDataPart("name",name.getText().toString().trim())
-                    .addFormDataPart("title",occupation.getText().toString())
-                    .addFormDataPart("salary",salary.getText().toString())
-                    .addFormDataPart("department",department.getText().toString())
-                    .addFormDataPart("img", "temp.jpg", RequestBody.create(MediaType.parse("image/png"), photoFile));
+                    .addFormDataPart("cid", Constances.getCid() + "")
+                    .addFormDataPart("name", name.getText().toString().trim())
+                    .addFormDataPart("title", occupation.getText().toString())
+                    .addFormDataPart("salary", salary.getText().toString())
+                    .addFormDataPart("department", department.getText().toString())
+                    .addFormDataPart("img", "temp.jpg", RequestBody.create(MediaType.parse("application/octet-stream"), photoFile));
+
+//            RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"),photoFile);
+//            //addPart用来传入文件参数
+//            builder.addPart(Headers.of("Content-Disposition", "form-data; name=\"img\";filename=\""+photoFile.getName()+"\""),fileBody);
             RequestBody requestBody = builder.build();
             Request request = new Request.Builder()
                     .url(PHOTO_URL)     //服务器URL
@@ -155,7 +159,10 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
     private void executeRequest(Request request) {
 
         //3.将Request封装为Call
-        Call call = new OkHttpClient().newCall(request);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(100, TimeUnit.SECONDS)
+                .readTimeout(100,TimeUnit.SECONDS).build();
+        Call call = client.newCall(request);
         //4.执行call
         call.enqueue(new Callback() {
 

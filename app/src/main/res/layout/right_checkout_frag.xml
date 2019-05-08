@@ -35,4 +35,12 @@
         android:hint="人脸识别"
         />
 
+    <ProgressBar
+        android:id="@+id/prograssbar_checkout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        />
+
 </LinearLayout>
