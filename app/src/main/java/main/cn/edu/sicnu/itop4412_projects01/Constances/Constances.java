@@ -9,7 +9,7 @@ package main.cn.edu.sicnu.itop4412_projects01.Constances;
  */
 public class Constances {
 
-    private static String IP = "192.168.8.124";
+    private static String IP = "192.168.31.179";
 
     private static String port = "8080";
 
@@ -18,6 +18,8 @@ public class Constances {
     public static final int SUCCESS = 1;
 
     public static final int FAIL = 2;
+
+    private static int cid = 10001;
 
     /**
      * 获取登陆验证的url
@@ -35,5 +37,19 @@ public class Constances {
         return FAIL;
     }
 
+    public static String getIP() {
+        return IP;
+    }
 
+    public static String getPort() {
+        return port;
+    }
+
+    public static int getCid() {
+        return cid;
+    }
+
+    public static void setCid(int cid) {
+        Constances.cid = cid;
+    }
 }
