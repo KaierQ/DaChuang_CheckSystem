@@ -31,6 +31,7 @@ import java.util.HashMap;
 
 import main.cn.edu.sicnu.itop4412_projects01.Constances.Constances;
 import main.cn.edu.sicnu.itop4412_projects01.R;
+import main.cn.edu.sicnu.itop4412_projects01.utils.AuthService;
 import main.cn.edu.sicnu.itop4412_projects01.utils.Sample;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -55,7 +56,7 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
     //生成该路径的文件
     private File photoFile = new File(path);
     //图像检测服务器请求端
-    private AipFace aipFaceClient;
+//    private AipFace aipFaceClient;
 
     private String photoPath;
 
@@ -67,12 +68,11 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
         checkInImg = v.findViewById(R.id.img_checkin);
         progressBar = v.findViewById(R.id.prograssbar_checkin);
         checkInImg.setOnClickListener(this);
-        // 初始化一个AipFace
-        aipFaceClient = new AipFace(Sample.APP_ID, Sample.API_KEY, Sample.SECRET_KEY);
-        // 可选：设置网络连接参数
-        aipFaceClient.setConnectionTimeoutInMillis(2000);
-        aipFaceClient.setSocketTimeoutInMillis(60000);
-
+//        // 初始化一个AipFace
+//        aipFaceClient = new AipFace(Sample.APP_ID, Sample.API_KEY, Sample.SECRET_KEY);
+//        // 可选：设置网络连接参数
+//        aipFaceClient.setConnectionTimeoutInMillis(2000);
+//        aipFaceClient.setSocketTimeoutInMillis(6000);a
         return v;
     }
 
@@ -99,6 +99,9 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
         photoFile = new File(path,"/temp.jpg");
         photoPath = path+"/temp.jpg";
         Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(photoFile.exists()){
+            photoFile.delete();
+        }
         if(photoFile!=null){
             Log.d(TAG, "takePhoto: "+photoFile.getAbsolutePath());
             //启动相机拍照
@@ -132,19 +135,24 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
                     Request request = new Request.Builder()
                             .url(PHOTO_URL)
                             .post(requestBody).build();
+                    FileOutputStream fileOutputStream = null;
                     try {
                         Response response = client.newCall(request).execute();
                         byte[] bytes = response.body().bytes();
-                        FileOutputStream fileOutputStream = new FileOutputStream(new File(path,"raw.jpg"));
+                        fileOutputStream = new FileOutputStream(new File(path,"raw.jpg"));
                         fileOutputStream.write(bytes);
                     } catch (IOException e) {
                         e.printStackTrace();
+                        if(fileOutputStream!=null){
+                            try {
+                                fileOutputStream.close();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
                     }
                     //进行图像比对
-                    ImageCompare(aipFaceClient);
-                    Message message = new Message();
-                    message.what = Constances.SUCCESS;
-                    handler.sendMessage(message);
+                    ImageCompare(path+File.separator+"raw.jpg",path+File.separator+"temp.jpg");
                 }
             }).start();
         }
@@ -169,11 +177,14 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
         images.add(path2);
         //进行图像对比
         JSONObject res = client.match(images, options);
+        Log.d(TAG, "ImageCompare: "+res.toString());
         try {
-            JSONObject result = res.getJSONObject("result");
-            JSONArray jsonArray = result.getJSONArray(result.toString());
-            JSONObject jsonObject = jsonArray.getJSONObject(0);
-            String score = jsonObject.getString("score");
+            JSONArray result = res.getJSONArray("result");
+            String score = null;
+            for(int i=0;i<result.length();i++){
+                JSONObject jsonObject = result.getJSONObject(i);
+                score = jsonObject.getString("score");
+            }
             Integer integer = Integer.valueOf(score);
             Message message = new Message();
             if(integer>=80){
@@ -186,7 +197,16 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "ImageCompare: "+res.toString());
+    }
+
+    /**
+     * 进行人脸对比
+     * @param rawImgPath
+     * @param identifyImgPath
+     */
+    public void ImageCompare(String rawImgPath,String identifyImgPath){
+        String match = AuthService.match(rawImgPath, identifyImgPath);
+
     }
 
     private Handler handler = new Handler(){

@@ -73,7 +73,7 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
         aipFaceClient = new AipFace(Sample.APP_ID, Sample.API_KEY, Sample.SECRET_KEY);
         // 可选：设置网络连接参数
         aipFaceClient.setConnectionTimeoutInMillis(2000);
-        aipFaceClient.setSocketTimeoutInMillis(60000);
+        aipFaceClient.setSocketTimeoutInMillis(6000);
 
         return view;
     }
@@ -144,9 +144,9 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
                     }
                     //进行图像比对
                     ImageCompare(aipFaceClient);
-                    Message message = new Message();
-                    message.what = Constances.SUCCESS;
-                    handler.sendMessage(message);
+//                    Message message = new Message();
+//                    message.what = Constances.SUCCESS;
+//                    handler.sendMessage(message);
                 }
             }).start();
         }
@@ -171,11 +171,14 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
         images.add(path2);
         //进行图像对比
         JSONObject res = client.match(images, options);
+        Log.d(TAG, "ImageCompare: "+res.toString());
         try {
-            JSONObject result = res.getJSONObject("result");
-            JSONArray jsonArray = result.getJSONArray(result.toString());
-            JSONObject jsonObject = jsonArray.getJSONObject(0);
-            String score = jsonObject.getString("score");
+            JSONArray result = res.getJSONArray("result");
+            String score = null;
+            for(int i=0;i<result.length();i++){
+                JSONObject jsonObject = result.getJSONObject(i);
+                score = jsonObject.getString("score");
+            }
             Integer integer = Integer.valueOf(score);
             Message message = new Message();
             if(integer>=80){
@@ -188,7 +191,7 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "ImageCompare: "+res.toString());
+
     }
 
     @SuppressLint("HandlerLeak")
