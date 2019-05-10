@@ -1,7 +1,6 @@
 package main.cn.edu.sicnu.itop4412_projects01;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -42,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ProgressBar progressBar;
     //选择框
     private CheckBox rememberAccountPwd;
-
     //当前活动
     private AppCompatActivity activity;
 
@@ -148,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(rememberAccountPwd.isChecked()){
                 saveAccountAndPassword();
             }
-
             break;
             case R.id.test:
                 //跳转活动
@@ -176,10 +173,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //跳转活动
                     Intent intent = new Intent(activity,HomePageActivity.class);
                     startActivity(intent);
+                    Constances.setCid(Integer.valueOf(accountEdit.getText().toString().trim()));
                     //销毁当前活动
                     finish();
                     break;
                 case Constances.FAIL:
+                    //登陆失败
                     //重新恢复登录按钮和EditText
                     login.setEnabled(true);
                     accountEdit.setEnabled(true);

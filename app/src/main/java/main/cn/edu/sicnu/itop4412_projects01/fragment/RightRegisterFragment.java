@@ -1,5 +1,7 @@
 package main.cn.edu.sicnu.itop4412_projects01.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -76,6 +78,13 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         //将所有输入禁用
+        if("".equals(name.getText().toString().trim())
+                ||"".equals(occupation.getText().toString().trim())
+                ||"".equals(salary.getText().toString().trim())
+                ||"".equals(department.getText().toString().trim())){
+            Toast.makeText(getActivity(), "请输入完整信息!!!", Toast.LENGTH_SHORT).show();
+            return ;
+        }
         name.setEnabled(false);
         occupation.setEnabled(false);
         salary.setEnabled(false);
@@ -83,7 +92,6 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
         register.setEnabled(false);
         switch (view.getId()){
             case R.id.register:
-                Log.d(TAG, "onClick: click");
                 progressBar.setVisibility(View.VISIBLE);
                 new Thread(new Runnable() {
                     @Override
@@ -105,8 +113,8 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
             photoFile.mkdirs();
         }
         //创建存储图像的路径
-        photoFile = new File(path,"/temp.jpg");
-        photoPath = path+"/temp.jpg";
+        photoFile = new File(path,"/test.jpg");
+        photoPath = path+"/test.jpg";
         Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(photoFile!=null){
             Log.d(TAG, "takePhoto: "+photoFile.getAbsolutePath());
@@ -128,8 +136,6 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode==1){
 //            Toast.makeText(getActivity(), "上传中,请稍后...", Toast.LENGTH_SHORT).show();
-            //这种情况下data为null,因为自定义了路径,所以通过这个路径来获取
-            //Bitmap bitmap = BitmapUtil.getSmallBitmap(photoPath);
             Log.d(TAG, "onActivityResult: "+PHOTO_URL);
             //将文件分割
             //Android版本不同所用到的MultipartBody  MultipartBuilder对象不同  我用的版本android 3.0以上 所以用的MultipartBuilder
@@ -140,11 +146,7 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
                     .addFormDataPart("title", occupation.getText().toString())
                     .addFormDataPart("salary", salary.getText().toString())
                     .addFormDataPart("department", department.getText().toString())
-                    .addFormDataPart("img", "temp.jpg", RequestBody.create(MediaType.parse("application/octet-stream"), photoFile));
-
-//            RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"),photoFile);
-//            //addPart用来传入文件参数
-//            builder.addPart(Headers.of("Content-Disposition", "form-data; name=\"img\";filename=\""+photoFile.getName()+"\""),fileBody);
+                    .addFormDataPart("img", "test.jpg", RequestBody.create(MediaType.parse("application/octet-stream"), photoFile));
             RequestBody requestBody = builder.build();
             Request request = new Request.Builder()
                     .url(PHOTO_URL)     //服务器URL
@@ -203,19 +205,59 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
             salary.setEnabled(true);
             department.setEnabled(true);
             register.setEnabled(true);
+            //通过AlertDialog.Builder这个类来实例化我们的一个AlertDialog的对象
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            //将进度条设置为消失
+            progressBar.setVisibility(View.GONE);
             switch (msg.what){
                 case Constances.SUCCESS:
                     //注册成功
-                    //将进度条设置为消失
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(), "注册成功", Toast.LENGTH_SHORT).show();
+                    //设置title图标
+                    builder.setIcon(R.mipmap.success);
+                    //设置Title内容
+                    builder.setTitle("结果");
+                    //设置信息
+                    builder.setMessage("注册成功!");
+                    //    设置一个PositiveButton
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            Toast.makeText(getActivity(), "注册成功", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    builder.show();
                     break;
                 case Constances.FAIL:
                     //注册失败
-                    //进度条消失
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getActivity(),"网络连接失败！",Toast.LENGTH_LONG).show();
-//                    Toast.makeText(getActivity(), "注册失败", Toast.LENGTH_SHORT).show();
+                    //设置title图标
+                    builder.setIcon(R.mipmap.fail);
+                    //设置Title内容
+                    builder.setTitle("结果");
+                    //设置信息
+                    builder.setMessage("注册失败!");
+                    //设置一个PositiveButton
+                    builder.setPositiveButton("重新注册", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            Toast.makeText(getActivity(), "请重新输入!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    //设置一个NegativeButton
+                    builder.setNegativeButton("取消注册", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            name.setText("");
+                            occupation.setText("");
+                            salary.setText("");
+                            department.setText("");
+                        }
+                    });
+                    builder.show();
                     break;
                 default:break;
             }

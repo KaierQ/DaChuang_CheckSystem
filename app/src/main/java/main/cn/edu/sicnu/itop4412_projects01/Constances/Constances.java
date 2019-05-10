@@ -19,6 +19,12 @@ public class Constances {
 
     public static final int FAIL = 2;
 
+    public static final int NONE = 3;
+
+    public static final int INTERNET_PARAM = 4;
+
+    public static final int NO_CHECK_IN = 5;
+
     private static int cid = 10001;
 
     /**
