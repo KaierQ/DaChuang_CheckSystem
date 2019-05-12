@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 
+import main.cn.edu.sicnu.itop4412_projects01.Constances.CheckResultParam;
 import main.cn.edu.sicnu.itop4412_projects01.Constances.Constances;
 import main.cn.edu.sicnu.itop4412_projects01.R;
 import main.cn.edu.sicnu.itop4412_projects01.utils.AuthService;
@@ -248,9 +249,14 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
             JSONObject jsonObject = new JSONObject(retString);
             resultValue = jsonObject.getString("result");
             response.close();
-            if("打卡成功!".equals(resultValue)){
+            if(CheckResultParam.CHECK_IN_SUCCESS.equals(resultValue)){
+                resultValue = "打卡成功";
                 return true;
+            }else if (CheckResultParam.HAD_CHECK.equals(resultValue)){
+                resultValue = "您已经打卡,无法重复打卡";
+                return false;
             }else{
+                resultValue = "网络参数请求错误,打卡失败";
                 return false;
             }
         } catch (IOException e) {
@@ -285,7 +291,7 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
                 message.what = Constances.SUCCESS;
                 handler.sendMessage(message);
             }else{
-                message.what = Constances.FAIL;
+                message.what = Constances.INTERNET_PARAM;
                 handler.sendMessage(message);
             }
         }else{
@@ -390,15 +396,25 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
                             return ;
                         }
                     });
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            eId.setText("");
+                            return ;
+                        }
+                    });
                     builder.show();
                     break;
                 default:break;
             }
-            //删除临时打卡照片
-            File photoFile = new File(photoPath);
-            if(photoFile.exists()){
-                photoFile.delete();
-            }
+            resultValue = "";
+//            //删除临时打卡照片
+//            File photoFile = new File(photoPath);
+//            if(photoFile.exists()){
+//                photoFile.delete();
+//            }
         }
     };
 

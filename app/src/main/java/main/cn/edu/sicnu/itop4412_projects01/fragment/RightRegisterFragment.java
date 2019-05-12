@@ -59,6 +59,9 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
     private String path = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"dachuang";
     //生成该路径的文件
     private File photoFile = new File(path);
+    //返回值
+    private String resultValue;
+
     private String photoPath;
 
     @Nullable
@@ -182,8 +185,9 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
                 try {
                     JSONObject jsonObject = new JSONObject(relsult);
                     String rel = jsonObject.getString("result");
+                    resultValue = rel;
                     Message message = new Message();
-                    if(rel.equals("true")){
+                    if(!rel.equals("false")){
                         message.what = Constances.SUCCESS;
                     }else {
                         message.what = Constances.FAIL;
@@ -217,8 +221,8 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
                     //设置Title内容
                     builder.setTitle("结果");
                     //设置信息
-                    builder.setMessage("注册成功!");
-                    //    设置一个PositiveButton
+                    builder.setMessage("注册成功!您的员工号为:"+resultValue+" 请牢记!!!");
+                    //设置一个PositiveButton
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener()
                     {
                         @Override

@@ -21,18 +21,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.baidu.aip.face.AipFace;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 
+import main.cn.edu.sicnu.itop4412_projects01.Constances.CheckResultParam;
 import main.cn.edu.sicnu.itop4412_projects01.Constances.Constances;
 import main.cn.edu.sicnu.itop4412_projects01.R;
 import main.cn.edu.sicnu.itop4412_projects01.utils.AuthService;
@@ -207,9 +202,14 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
             JSONObject jsonObject = new JSONObject(retString);
             resultValue = jsonObject.getString("result");
             response.close();
-            if("true".equals(resultValue)){
+            if(CheckResultParam.CHECK_OUT_SUCCESS.equals(resultValue)){
+                resultValue = "打卡成功";
                 return true;
+            }else if (CheckResultParam.HAD_CHECK.equals(resultValue)){
+                resultValue = "您已经打卡,无法重复打卡";
+                return false;
             }else{
+                resultValue = "网络参数请求错误,打卡失败";
                 return false;
             }
         } catch (IOException e) {
@@ -375,11 +375,12 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
                     break;
                 default:break;
             }
+            resultValue = "";
             //删除临时打卡照片
-            File photoFile = new File(photoPath);
-            if(photoFile.exists()){
-                photoFile.delete();
-            }
+//            File photoFile = new File(photoPath);
+//            if(photoFile.exists()){
+//                photoFile.delete();
+//            }
         }
     };
 
