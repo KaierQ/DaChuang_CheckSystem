@@ -237,7 +237,7 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
         RequestBody requestBody = new FormBody.Builder()
                 .add("cid", String.valueOf(Constances.getCid()))
                 .add("eid",eId.getText().toString().trim())
-                .add("arriveTime",year+"-"+(month+1)+"-"+day+" "+hour+":"+minute+":"+second).build();
+                .add("arriveTime",year+"-"+month+"-"+day+" "+hour+":"+minute+":"+second).build();
 
         Request checkInRequest = new Request.Builder()
                 .url(CHECK_IN_URL)
@@ -410,11 +410,11 @@ public class RightCheckInFragment extends Fragment implements View.OnClickListen
                 default:break;
             }
             resultValue = "";
-//            //删除临时打卡照片
-//            File photoFile = new File(photoPath);
-//            if(photoFile.exists()){
-//                photoFile.delete();
-//            }
+            //删除临时打卡照片
+            File photoFile = new File(photoPath);
+            if(photoFile.exists()){
+                photoFile.delete();
+            }
         }
     };
 

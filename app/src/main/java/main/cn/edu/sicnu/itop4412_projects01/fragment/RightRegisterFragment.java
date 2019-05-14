@@ -116,8 +116,8 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
             photoFile.mkdirs();
         }
         //创建存储图像的路径
-        photoFile = new File(path,"/test.jpg");
-        photoPath = path+"/test.jpg";
+        photoFile = new File(path,"/temp.jpg");
+        photoPath = path+"/temp.jpg";
         Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(photoFile!=null){
             Log.d(TAG, "takePhoto: "+photoFile.getAbsolutePath());
@@ -149,7 +149,7 @@ public class RightRegisterFragment extends Fragment implements View.OnClickListe
                     .addFormDataPart("title", occupation.getText().toString())
                     .addFormDataPart("salary", salary.getText().toString())
                     .addFormDataPart("department", department.getText().toString())
-                    .addFormDataPart("img", "test.jpg", RequestBody.create(MediaType.parse("application/octet-stream"), photoFile));
+                    .addFormDataPart("img", "temp.jpg", RequestBody.create(MediaType.parse("application/octet-stream"), photoFile));
             RequestBody requestBody = builder.build();
             Request request = new Request.Builder()
                     .url(PHOTO_URL)     //服务器URL

@@ -224,7 +224,9 @@ public class AuthService {
 	}
 
 	/**
-	 * 两个照片进行比对
+	 * 两个照片进行比对,
+	 * 传入两张图片的路径，并转换为字节数组
+	 * 后转换为base64编码，送至云端
 	 * @param rawImgPath
 	 * @param identifyImgPath
 	 * @return

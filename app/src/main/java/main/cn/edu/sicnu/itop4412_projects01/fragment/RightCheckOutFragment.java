@@ -77,6 +77,10 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        if(eId.getText().toString().equals("")){
+            Toast.makeText(getActivity(), "请输入工号!", Toast.LENGTH_SHORT).show();
+            return ;
+        }
         switch (view.getId()){
             case R.id.img_checkout:
                 progressBar.setVisibility(View.VISIBLE);
@@ -99,6 +103,9 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
         photoFile = new File(path,"/temp.jpg");
         photoPath = path+"/temp.jpg";
         Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(photoFile.exists()){
+            photoFile.delete();
+        }
         if(photoFile!=null){
             Log.d(TAG, "takePhoto: "+photoFile.getAbsolutePath());
             //启动相机拍照
@@ -138,6 +145,7 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
                     Request request = new Request.Builder()
                             .url(PHOTO_URL)
                             .post(requestBody).build();
+
                     byte[] bytes = null;
                     try {
                         Response response = client.newCall(request).execute();
@@ -147,12 +155,12 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    //进行图像比对
                     ImageCompare(bytes,path+File.separator+"temp.jpg");
                 }
             }).start();
         }
     }
-
     /**
      * 判断用户存在与否
      * @return
@@ -358,9 +366,9 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
                     //设置Title的图标
                     builder.setIcon(R.mipmap.fail);
                     //设置Title内容
-                    builder.setTitle("警告");
+                    builder.setTitle("失败");
                     //    设置Content来显示一个信息
-                    builder.setMessage("您还未上班打卡,无法进行下班打卡");
+                    builder.setMessage(resultValue);
                     //    设置一个PositiveButton
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener()
                     {
@@ -377,11 +385,12 @@ public class RightCheckOutFragment extends Fragment implements View.OnClickListe
             }
             resultValue = "";
             //删除临时打卡照片
-//            File photoFile = new File(photoPath);
-//            if(photoFile.exists()){
-//                photoFile.delete();
-//            }
+            File photoFile = new File(photoPath);
+            if(photoFile.exists()){
+                photoFile.delete();
+            }
         }
     };
+
 
 }
